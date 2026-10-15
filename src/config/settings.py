@@ -134,20 +134,19 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
 
-# Сучасний синтаксис збереження файлів для Django 4.2 / 5.x / 6.x
+# 1. Новий формат для Django 5.x / 6.x
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage", # БЕЗ слова Manifest!
     },
 }
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# 2. Застарілі змінні для сумісності з django-cloudinary-storage
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage" # БЕЗ слова Manifest!
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-
-WHITENOISE_MANIFEST_STRICT = False
 
 MEDIA_URL = '/media/'
 
