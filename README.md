@@ -152,13 +152,7 @@ Render збирає застосунок із Git, а не з локальног
 
 1. Виберіть **New → Web Service**, під’єднайте репозиторій сайту та потрібну гілку.
 2. Виберіть **Language: Docker**, Dockerfile `./Dockerfile` і контекст `.`. Обидва сервіси мають бути в одному регіоні. Не запускайте на Render `docker-compose.yml` або локальний Nginx: Render надає власний HTTP/HTTPS proxy.
-3. У **Advanced → Docker Command** вставте:
-
-   ```sh
-   /bin/sh -c 'python manage.py migrate --noinput && python manage.py collectstatic --noinput --upload-unhashed-files && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-10000} --workers 1 --access-logfile - --error-logfile -'
-   ```
-
-   Команда застосовує міграції, збирає static-файли та прив’язує Gunicorn до порту `PORT`, який задає Render.
+3. Залиште **Docker Command** порожньою, щоб використати команду з Dockerfile. Вона спочатку застосовує міграції, збирає static-файли, а потім запускає Gunicorn на порту `PORT`, який задає Render. Якщо раніше в Render було збережено власну **Docker Command**, очистьте її — інакше вона перекриє команду з Dockerfile. Django також налаштований розпізнавати HTTPS за заголовком `X-Forwarded-Proto` від проксі Render.
 
 4. У **Environment** вебсервісу додайте спільні змінні:
 
@@ -176,6 +170,24 @@ Render збирає застосунок із Git, а не з локальног
    `DATABASE_URL` має пріоритет над MySQL-змінними. `PORT` задається Render автоматично. Якщо використовуються медіафайли або надсилання листів, додайте потрібні `CLOUDINARY_*` і `EMAIL_*`.
 
 5. Створіть Web Service, дочекайтеся успішного деплою та відкрийте його адресу `*.onrender.com`. HTTPS для Web Service надає Render.
+
+### Помилка `relation "shop_category" does not exist`
+
+Це означає, що застосунок під’єднався до PostgreSQL, у якому ще не застосована міграція `shop.0001_initial`. Переконайтеся, що в Render не задано власну **Docker Command**, яка перекриває команду з Dockerfile, а `DATABASE_URL` вебсервісу вказує на потрібну базу. У `shop.0001_initial` є створення таблиці категорій.
+
+Якщо міграцію потрібно застосувати вручну на Free-плані, запустіть із кореня проєкту локальний Docker-контейнер, під’єднавши його до **External Database URL** із Render:
+
+```sh
+printf 'External Database URL (input hidden): '
+read -r -s DATABASE_URL
+printf '\n'
+export DATABASE_URL
+docker compose run --rm --build --no-deps -e DATABASE_URL web python manage.py showmigrations shop
+docker compose run --rm --no-deps -e DATABASE_URL web python manage.py migrate --noinput
+unset DATABASE_URL
+```
+
+У `showmigrations` переконайтеся, що `shop.0001_initial` позначена `[X]`. Якщо після міграції помилка лишилася, звірте, що `DATABASE_URL` у вебсервісі та External Database URL належать саме тій самій базі. Не використовуйте `--fake` і не видаляйте базу.
 
 ### Створення адміністратора на Free-плані
 
