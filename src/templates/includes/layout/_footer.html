@@ -1,0 +1,206 @@
+{% load static i18n %}
+<footer class="ltn__footer-area">
+    <div class="footer-top-area section-bg-1 plr--5">
+        <div class="container-fluid">
+            <div class="row">
+                
+                <!-- 1. Логотип, SEO-текст та контакти -->
+                <div class="col-xl-4 col-md-6 col-sm-6 col-12">
+                    <div class="footer-widget footer-about-widget">
+                        <div class="footer-logo">
+                            <div class="site-logo">
+                                <a href="{% url 'index' %}">
+                                    <img src="{% static 'img/logo-dark.png' %}" alt="Rosela - Магазин квітів">
+                                </a>
+                            </div>
+                        </div>
+                        <p class="seo-text">
+                            {% trans "Професійна студія флористики. Ми створюємо авторські букети, стильні композиції та пропонуємо швидку доставку свіжих квітів, щоб ваші свята були незабутніми." %}
+                        </p>
+                        <div class="footer-address">
+                            <ul>
+                                <li>
+                                    <div class="footer-address-icon">
+                                        <i class="icon-placeholder"></i>
+                                    </div>
+                                    <div class="footer-address-info">
+                                        <p>{% trans "вул. Дніпровська, 2а, м. Вишгород, Україна" %}</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="footer-address-icon">
+                                        <i class="icon-call"></i>
+                                    </div>
+                                    <div class="footer-address-info">
+                                        <p>
+                                            <a href="tel:+380936252589">+38 (093) 625-25-89</a><br>
+                                            <a href="tel:+380994292759">+38 (099) 429-27-59</a>
+                                        </p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="footer-address-icon">
+                                        <i class="icon-mail"></i>
+                                    </div>
+                                    <div class="footer-address-info">
+                                        <p><a href="mailto:kvity1331@gmail.com">kvity1331@gmail.com</a></p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- Соціальні мережі (Тільки FB та Instagram) -->
+                        <div class="ltn__social-media ltn__social-media-2 mt-20">
+                            <ul>
+                                <li>
+                                    <!-- Додаємо border, заокруглення і гарантуємо правильні розміри -->
+                                    <a href="#" title="Facebook" target="_blank" rel="noopener noreferrer" 
+                                    style="border: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.instagram.com/kvity_podarunky/" title="Instagram" target="_blank" rel="noopener noreferrer" 
+                                    style="border: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                </li>
+                                <!-- Бонус: Додав Telegram, оскільки для українського бізнесу це мастхев -->
+                                {% comment %} <li>
+                                    <a href="#" title="Telegram" target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-telegram-plane"></i>
+                                    </a>
+                                </li> {% endcomment %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2. Навігація сайту -->
+                <div class="col-xl-2 col-md-6 col-sm-6 col-12">
+                    <div class="footer-widget footer-menu-widget clearfix">
+                        <h4 class="footer-title">{% trans "Компанія" %}</h4>
+                        <div class="footer-menu">
+                            <ul>
+                                <li><a href="{% url 'index' %}">{% trans "Головна" %}</a></li>
+                                <li><a href="#">{% trans "Про нас" %}</a></li>
+                                <li><a href="#">{% trans "Магазин квітів" %}</a></li>
+                                <li><a href="#">{% trans "Новини та блог" %}</a></li>
+                                <li><a href="{% url 'contact' %}">{% trans "Контакти" %}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 3. Клієнтський сервіс (Корисні посилання) -->
+                <div class="col-xl-2 col-md-6 col-sm-6 col-12">
+                    <div class="footer-widget footer-menu-widget clearfix">
+                        <h4 class="footer-title">{% trans "Покупцям" %}</h4>
+                        <div class="footer-menu">
+                            <ul>
+                                <li><a href="#">{% trans "Доставка та оплата" %}</a></li>
+                                <li><a href="#">{% trans "Оформлення заходів" %}</a></li>
+                                <li><a href="#">{% trans "Догляд за квітами" %}</a></li>
+                                <li><a href="#">{% trans "FAQ (Питання)" %}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 4. Розсилка та оплата -->
+                <div class="col-xl-4 col-md-6 col-sm-12 col-12">
+                    <div class="footer-widget footer-newsletter-widget">
+                        <h4 class="footer-title">{% trans "Новини та знижки" %}</h4>
+                        <p>{% trans "Підпишіться на нашу розсилку, щоб першими отримувати спеціальні пропозиції на святкові букети." %}</p>
+                        
+                        <!-- Форма підписки (відцентрована і акуратна) -->
+                        <div class="footer-newsletter">
+                            <form action="#" method="post" id="newsletter-form">
+                                {% csrf_token %}
+                                <div class="mc-field-group">
+                                    <input type="email" name="EMAIL" placeholder="{% trans 'Ваш Email*' %}" required>
+                                </div>
+                                <div class="btn-wrapper">
+                                    <button class="theme-btn-1 btn" type="submit" aria-label="Subscribe">
+                                        <i class="fas fa-location-arrow"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <h5 class="mt-30 mb-2">{% trans "Ми приймаємо" %}</h5>
+                        <div class="footer-payment-icons d-flex align-items-center">
+                            <!-- Іконка Visa (оригінальний синій колір бренду) -->
+                            <i class="fab fa-cc-visa fa-2x" style="color: #1a1f71; margin-right: 10px;" title="Visa"></i>
+                            
+                            <!-- Іконка Mastercard (оригінальний червоно-помаранчевий колір) -->
+                            <i class="fab fa-cc-mastercard fa-2x" style="color: #eb001b;" title="Mastercard"></i>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Нижній рядок (Копірайт та юридична інформація) -->
+    <div class="ltn__copyright-area ltn__copyright-2 section-bg-2 ltn__border-top-2--- plr--5">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 col-12">
+                    <div class="ltn__copyright-design clearfix">
+                        <p>
+                            &copy; <span class="current-year"></span> <strong>Rosela</strong>. {% trans "Усі права захищено." %}
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12 align-self-center">
+                    <div class="ltn__copyright-menu text-right text-end">
+                        <ul>
+                            <li><a href="#">{% trans "Умови використання" %}</a></li>
+                            <li><a href="#">{% trans "Політика конфіденційності" %}</a></li>
+                            <li><a href="#">{% trans "Публічна оферта" %}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const newsletterForm = document.getElementById('newsletter-form');
+    
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function (e) {
+            e.preventDefault(); 
+            e.stopPropagation();
+            
+            const emailInput = newsletterForm.querySelector('input[type="email"]');
+            
+            let msgBox = document.getElementById('newsletter-alert');
+            if (!msgBox) {
+                msgBox = document.createElement('div');
+                msgBox.id = 'newsletter-alert';
+                // Відступ збільшено до 15px для кращого візуального розділення
+                msgBox.style.cssText = 'margin-top: 10px; font-size: 14px; font-weight: 600; display: flex; align-items: center; color: #7cb342; transition: opacity 0.5s ease; opacity: 0;';
+                
+                // Вставляємо блок ПІСЛЯ форми, а не всередину
+                newsletterForm.insertAdjacentElement('afterend', msgBox);
+            }
+            
+            msgBox.innerHTML = '<i class="fas fa-check-circle" style="margin-right: 8px;"></i> <span>Дякуємо! Ви успішно підписалися.</span>';
+            
+            setTimeout(() => {
+                msgBox.style.opacity = '1';
+            }, 10);
+            
+            emailInput.value = '';
+            
+            setTimeout(() => {
+                msgBox.style.opacity = '0';
+            }, 4000);
+        });
+    }
+});
+</script>
+</footer>

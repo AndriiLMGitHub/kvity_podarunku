@@ -1,0 +1,141 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-30 09:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: src/app/apps.py:8
+msgid "Магазин"
+msgstr "Магазин"
+
+#: src/app/models.py:16
+msgid "Назва категорії"
+msgstr "Название категории"
+
+#: src/app/models.py:22 src/app/models.py:75
+msgid "URL-слаг"
+msgstr "URL-слаг"
+
+#: src/app/models.py:23
+msgid "Частина посилання. Заповнюється автоматично."
+msgstr "Часть ссылки. Заполняется автоматически."
+
+#: src/app/models.py:31
+msgid "Батьківська категорія"
+msgstr "Родительская категория"
+
+#: src/app/models.py:35
+msgid "Активна"
+msgstr "Активна"
+
+#: src/app/models.py:39
+msgid "Порядок сортування"
+msgstr "Порядок сортировки"
+
+#: src/app/models.py:40
+msgid "Визначає порядок виводу (0 - найвище)"
+msgstr "Определяет порядок вывода (0 - выше)"
+
+#: src/app/models.py:44
+msgid "категорія"
+msgstr "категория"
+
+#: src/app/models.py:45
+msgid "Категорії"
+msgstr "Категории"
+
+#: src/app/models.py:60
+msgid "Категорія"
+msgstr "Категория"
+
+#: src/app/models.py:66
+msgid "Артикул (SKU)"
+msgstr "Артикул (SKU)"
+
+#: src/app/models.py:70
+msgid "Назва товару"
+msgstr "Название товара"
+
+#: src/app/models.py:79
+msgid "Опис"
+msgstr "Описание"
+
+#: src/app/models.py:85
+msgid "Ціна"
+msgstr "Цена"
+
+#: src/app/models.py:90
+msgid "Залишок на складі"
+msgstr "Остаток на складе"
+
+#: src/app/models.py:94
+msgid "Активний"
+msgstr "Активный"
+
+#: src/app/models.py:98
+msgid "Створено"
+msgstr "Создано"
+
+#: src/app/models.py:102
+msgid "Оновлено"
+msgstr "Обновлено"
+
+#: src/app/models.py:106
+msgid "товар"
+msgstr "товар"
+
+#: src/app/models.py:107
+msgid "Товари"
+msgstr "Товары"
+
+#: src/app/models.py:134
+msgid "Товар"
+msgstr "Товар"
+
+#: src/app/models.py:138
+msgid "Зображення"
+msgstr "Изображение"
+
+#: src/app/models.py:142
+msgid "Головне фото"
+msgstr "Главное фото"
+
+#: src/app/models.py:146
+msgid "Завантажено"
+msgstr "Загружено"
+
+#: src/app/models.py:159
+msgid "зображення"
+msgstr "изображение"
+
+#: src/app/models.py:160
+msgid "Галерея товару"
+msgstr "Галерея товара"
+
+#: src/config/settings.py:121
+msgid "Ukrainian"
+msgstr "Украинский"
+
+#: src/config/settings.py:122
+msgid "English"
+msgstr "Английский"
+
+#: src/config/settings.py:123
+msgid "Russian"
+msgstr "Русский"

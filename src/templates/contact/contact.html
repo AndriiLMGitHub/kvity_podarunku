@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Контакти" %} | Rosela{% endblock title %}
+{% block meta_description %}{% trans "Зв'яжіться з флористами Rosela. Наші контакти, адреса студії та форма замовлення індивідуального букета." %}{% endblock meta_description %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/custom/contact_form_checkbox.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <!-- BREADCRUMB AREA START -->
+    <div class="ltn__breadcrumb-area ltn__breadcrumb-area-2 ltn__breadcrumb-color-white bg-overlay-theme-black-90 bg-image" data-bg="{% static 'img/custom/banners/contact_banner.jpeg' %}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ltn__breadcrumb-inner ltn__breadcrumb-inner-2 justify-content-between">
+                        <div class="section-title-area ltn__section-title-2">
+                            <h6 class="section-subtitle ltn__secondary-color">// {% trans "Завжди на зв'язку" %}</h6>
+                            <h1 class="section-title white-color">{% trans "Наші контакти" %}</h1>
+                        </div>
+                        <div class="ltn__breadcrumb-list">
+                            <ul>
+                                <li><a href="{% url 'index' %}">{% trans "Головна" %}</a></li>
+                                <li>{% trans "Контакти" %}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- BREADCRUMB AREA END -->
+
+<!-- CONTACT ADDRESS AREA START -->
+    <div class="ltn__contact-address-area mb-90">
+        <div class="container">
+            <div class="row">
+                
+                <!-- Блок Email -->
+                <!-- mb-30 дає відступ на мобільних, mb-lg-0 прибирає його на ПК -->
+                <div class="col-lg-4 mb-30 mb-lg-0">
+                    <div class="ltn__contact-address-item ltn__contact-address-item-3 box-shadow h-100">
+                        <div class="ltn__contact-address-icon">
+                            <img src="{% static 'img/icons/10.png' %}" alt="{% trans 'Електронна пошта' %}">
+                        </div>
+                        <h3>{% trans "Електронна пошта" %}</h3>
+                        <p>
+                            <a href="mailto:kvity1331@gmail.com">kvity1331@gmail.com</a>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Блок Телефонів -->
+                <div class="col-lg-4 mb-30 mb-lg-0">
+                    <div class="ltn__contact-address-item ltn__contact-address-item-3 box-shadow h-100">
+                        <div class="ltn__contact-address-icon">
+                            <img src="{% static 'img/icons/11.png' %}" alt="{% trans 'Телефон' %}">
+                        </div>
+                        <h3>{% trans "Телефони" %}</h3>
+                        <p>
+                            <a href="tel:+380936252589">+38 (093) 625-25-89</a><br>
+                            <a href="tel:+380994292759">+38 (099) 429-27-59</a>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Блок Адреси -->
+                <div class="col-lg-4 mb-30 mb-lg-0">
+                    <div class="ltn__contact-address-item ltn__contact-address-item-3 box-shadow h-100">
+                        <div class="ltn__contact-address-icon">
+                            <img src="{% static 'img/icons/12.png' %}" alt="{% trans 'Адреса' %}">
+                        </div>
+                        <h3>{% trans "Студія флористики" %}</h3>
+                        <p>
+                            {% trans "вул. Дніпровська, 2а" %}<br>
+                            {% trans "м. Вишгород, Україна" %}
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <!-- CONTACT ADDRESS AREA END -->
+    
+    <!-- CONTACT MESSAGE AREA START -->
+    <div class="ltn__contact-message-area mb-120 mb--100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ltn__form-box contact-form-box box-shadow white-bg">
+                        <h4 class="title-2">{% trans "Напишіть нам" %}</h4>
+                        
+                        <!-- Форма адаптована під Django (CSRF Token) -->
+                        <form id="contact-form" action="{% url 'contact' %}" method="post">
+                            {% csrf_token %}
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-item input-item-name ltn__custom-icon">
+                                        <input type="text" name="name" placeholder="{% trans 'Ваше імя' %}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-item input-item-email ltn__custom-icon">
+                                        <input type="email" name="email" placeholder="{% trans 'Ваш Email' %}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-item">
+                                        <!-- Випадаючий список адаптовано під квітковий магазин -->
+                                        <select class="nice-select" name="service_type">
+                                            <option value="">{% trans "Оберіть тему звернення" %}</option>
+                                            <option value="Замовлення букета">{% trans "Замовлення букета" %}</option>
+                                            <option value="Весільна флористика">{% trans "Весільна флористика" %}</option>
+                                            <option value="Оформлення заходів">{% trans "Оформлення заходів" %}</option>
+                                            <option value="Співпраця">{% trans "Співпраця" %}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-item input-item-phone ltn__custom-icon">
+                                        <input type="text" name="phone" placeholder="{% trans 'Ваш телефон' %}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-item input-item-textarea ltn__custom-icon">
+                                <textarea class="mb-3" name="message" placeholder="{% trans 'Ваше повідомлення...' %}" required></textarea>
+                            </div>
+                            
+                            <div class="form-group mb-30">
+                                <label class="custom-checkbox-wrapper">
+                                    <input type="checkbox" name="agree" required class="custom-checkbox-input">
+                                    <span class="custom-checkbox-box"></span>
+                                    <span class="custom-checkbox-text">{% trans "Я даю згоду на обробку персональних даних." %}</span>
+                                </label>
+                            </div>
+                            
+                            <div class="btn-wrapper mt-0">
+                                <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit">{% trans "Відправити повідомлення" %}</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- CONTACT MESSAGE AREA END -->
+
+    <!-- GOOGLE MAP AREA START -->
+    <div class="google-map mb-120">
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2533.153592737392!2d30.491450176565497!3d50.58709847161862!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4d358a6635419%3A0xa1e2ea8401a72ba0!2z0LLRg9C70LjRhtGPINCU0L3RltC_0YDQvtCy0YHRjNC60LAsIDLQsCwg0JLQuNGI0LPQvtGA0L7QtCwg0JrQuNGX0LLRgdGM0LrQsCDQvtCx0LvQsNGB0YLRjCwgMDczMDE!5e0!3m2!1suk!2sua!4v1794301097411!5m2!1suk!2sua"
+            width="100%" 
+            height="100%" 
+            frameborder="0" 
+            allowfullscreen="" 
+            aria-hidden="false" 
+            tabindex="0"
+            loading="lazy" 
+            referrerpolicy="strict-origin-when-cross-origin">
+        </iframe>
+    </div>
+    <!-- GOOGLE MAP AREA END -->
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'js/custom/contact.js' %}"></script>
+{% endblock extra_js %}

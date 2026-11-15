@@ -1,0 +1,64 @@
+<!-- shop/partials/_product_list.html -->
+{% load static %}
+
+<div class="tab-content">
+    <!-- GRID VIEW -->
+    <div class="tab-pane fade active show" id="liton_product_grid">
+        <div class="ltn__product-tab-content-inner ltn__product-grid-view">
+            <div class="row">
+                {% for product in products %}
+                <div class="col-xl-3 col-lg-4 col-sm-6 col-6">
+                    <div class="ltn__product-item ltn__product-item-3 text-center">
+                        <div class="product-img">
+                            <a href="{{ product.get_absolute_url }}">
+                                {% if product.prefetched_main_images %}
+                                    <img src="{{ product.prefetched_main_images.0.image.url }}" alt="{{ product.name }}">
+                                {% else %}
+                                    <img src="{% static 'img/product/no-image.jpg' %}" alt="{{ product.name }}">
+                                {% endif %}
+                            </a>
+                            {% if product.badge %}
+                            <div class="product-badge"><ul><li class="sale-badge">{{ product.badge }}</li></ul></div>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h2 class="product-title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h2>
+                            <div class="product-price">
+                                <span>${{ product.price }}</span>
+                                {% if product.old_price %}<del>${{ product.old_price }}</del>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12"><p>Товарів у цій категорії немає.</p></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGINATION -->
+{% if is_paginated %}
+<div class="ltn__pagination-area text-center">
+    <div class="ltn__pagination">
+        <ul>
+            {% if page_obj.has_previous %}
+                <li><a href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"><i class="fas fa-angle-double-left"></i></a></li>
+            {% endif %}
+            
+            {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="active"><a href="javascript:void(0)">{{ num }}</a></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li><a href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"><i class="fas fa-angle-double-right"></i></a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endif %}

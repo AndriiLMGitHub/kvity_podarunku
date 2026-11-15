@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{{ product.name }} | Rosela{% endblock %}
+
+{% block content %}
+
+<!-- BREADCRUMB AREA START -->
+<div class="ltn__breadcrumb-area ltn__breadcrumb-area-2 ltn__breadcrumb-color-white bg-overlay-theme-black-90 bg-image"
+     data-bg="{% static 'img/custom/banners/blog_banner.jpeg' %}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ltn__breadcrumb-inner ltn__breadcrumb-inner-2 justify-content-between">
+                    <div class="section-title-area ltn__section-title-2">
+                        <h6 class="section-subtitle ltn__secondary-color">
+                            // {% trans "Деталі товару" %}
+                        </h6>
+                        <h1 class="section-title white-color">{{ product.name }}</h1>
+                    </div>
+                    <div class="ltn__breadcrumb-list">
+                        <ul>
+                            <li><a href="{% url 'index' %}">{% trans "Головна" %}</a></li>
+                            <li><a href="{% url 'product_list' %}">{% trans "Магазин" %}</a></li>
+                            <li>{{ product.category.name }}</li>
+                            <li aria-current="page">{{ product.name }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- BREADCRUMB AREA END -->
+
+<!-- SHOP DETAILS AREA START -->
+<div class="ltn__shop-details-area pb-85">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ltn__shop-details-inner mb-60">
+                    <div class="row">
+
+                        <!-- PRODUCT GALLERY: images sorted main-first in the view -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="ltn__shop-details-img-gallery">
+                                {% if gallery_images %}
+                                    <div class="ltn__shop-details-large-img">
+                                        {% for photo in gallery_images %}
+                                            <div class="single-large-img">
+                                                <a href="{{ photo.image.url }}" data-rel="lightcase:product-gallery"
+                                                   aria-label="{% trans 'Відкрити фото товару' %} {{ forloop.counter }}">
+                                                    <img src="{{ photo.image.url }}"
+                                                         alt="{{ product.name }} — {% trans 'фото' %} {{ forloop.counter }}"
+                                                         {% if not forloop.first %}loading="lazy"{% endif %}>
+                                                </a>
+                                                {% if product.badge and forloop.first %}
+                                                    <div class="product-badge">
+                                                        <ul><li class="sale-badge">{{ product.badge }}</li></ul>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% if gallery_images|length > 1 %}
+                                        <div class="ltn__shop-details-small-img">
+                                            {% for photo in gallery_images %}
+                                                <div class="single-small-img">
+                                                    <img src="{{ photo.image.url }}"
+                                                         alt="{{ product.name }} — {% trans 'мініатюра' %} {{ forloop.counter }}"
+                                                         loading="lazy">
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="bg-light d-flex align-items-center justify-content-center text-center p-5"
+                                         style="min-height: 360px;">
+                                        <span>{% trans "Фото товару поки немає" %}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- PRODUCT INFORMATION -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="modal-product-info shop-details-info pl-0">
+                                <h2>{{ product.name }}</h2>
+
+                                {% if product.badge %}
+                                    <p class="ltn__secondary-color mb-15">{{ product.badge }}</p>
+                                {% endif %}
+
+                                <div class="product-price">
+                                    <span>{{ product.price|floatformat:2 }} {% trans "грн" %}</span>
+                                    {% if product.old_price and product.old_price > product.price %}
+                                        <del>{{ product.old_price|floatformat:2 }} {% trans "грн" %}</del>
+                                    {% endif %}
+                                </div>
+
+                                {% if product.description %}
+                                    <p>{{ product.description|truncatewords:40 }}</p>
+                                {% endif %}
+
+                                <div class="ltn__product-details-menu-1">
+                                    <ul>
+                                        <li>
+                                            <strong>{% trans "Наявність:" %}</strong>
+                                            {% if product.stock > 0 %}
+                                                <span class="text-success">{% trans "Є в наявності" %}</span>
+                                            {% else %}
+                                                <span class="text-danger">{% trans "Немає в наявності" %}</span>
+                                            {% endif %}
+                                        </li>
+                                        <li>
+                                            <strong>{% trans "Артикул:" %}</strong> {{ product.sku }}
+                                        </li>
+                                        <li>
+                                            <strong>{% trans "Категорія:" %}</strong> {{ product.category.name }}
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- The cart needs an existing POST endpoint supplied as add_to_cart_url. -->
+                                <div class="ltn__product-details-menu-2">
+                                    {% if product.stock > 0 and add_to_cart_url %}
+                                        <form action="{{ add_to_cart_url }}" method="post">
+                                            {% csrf_token %}
+                                            <div class="d-flex align-items-center flex-wrap" style="gap: 12px;">
+                                                <label for="product-quantity" class="mb-0">
+                                                    {% trans "Кількість:" %}
+                                                </label>
+                                                <div class="cart-plus-minus">
+                                                    <input id="product-quantity" name="quantity" type="number"
+                                                           class="cart-plus-minus-box" value="1" min="1"
+                                                           max="{{ product.stock }}" step="1" required>
+                                                </div>
+                                                <div class="btn-wrapper">
+                                                    <button type="submit" class="theme-btn-1 btn btn-effect-1">
+                                                        <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                                                        {% trans "Додати до кошика" %}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    {% else %}
+                                        {% comment %} <button type="button" class="theme-btn-1 btn btn-effect-1" disabled>
+                                            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                                            {% if product.stock > 0 %}
+                                                {% trans "Кошик ще не підключений" %}
+                                            {% else %}
+                                                {% trans "Немає в наявності" %}
+                                            {% endif %}
+                                        </button> {% endcomment %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRODUCT DESCRIPTION -->
+                <div class="ltn__shop-details-tab-area mb-60">
+                    <div class="ltn__shop-details-tab-inner ltn__shop-details-tab-inner-2">
+                        <div class="ltn__shop-details-tab-menu">
+                            <div class="nav" role="tablist">
+                                <a class="active show" data-bs-toggle="tab" href="#product-description"
+                                   role="tab" aria-controls="product-description" aria-selected="true">
+                                    {% trans "Опис товару" %}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="tab-content">
+                            <div class="tab-pane fade active show" id="product-description" role="tabpanel">
+                                <div class="ltn__shop-details-tab-content-inner">
+                                    {% if product.description %}
+                                        {{ product.description|linebreaks }}
+                                    {% else %}
+                                        <p>{% trans "Опис товару поки не додано." %}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RELATED PRODUCTS -->
+                {% if related_products %}
+                    <div class="ltn__related-product-area">
+                        <div class="section-title-area ltn__section-title-2">
+                            <h6 class="section-subtitle ltn__secondary-color">
+                                // {% trans "Можливо, вам сподобається" %}
+                            </h6>
+                            <h2 class="section-title">{% trans "Схожі товари" %}</h2>
+                        </div>
+                        
+                        
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 align-items-stretch">
+                            {% for item in related_products %}
+                            <div class="col d-flex">
+                                <div class="ltn__product-item ltn__product-item-3
+                                            w-100 h-100 d-flex flex-column">
+
+                                    <!-- КЛІКАБЕЛЬНА ЧАСТИНА -->
+                                    <a href="{% url 'product_detail' slug=item.slug %}"
+                                    class="d-flex flex-column flex-grow-1 text-decoration-none">
+
+                                        <!-- ФОТО: ФІКСОВАНІ ПРОПОРЦІЇ -->
+                                        <div class="position-relative">
+
+                                            <!-- ФОТО -->
+                                            <div class="ratio ratio-1x1 overflow-hidden bg-light">
+                                                {% with item_photo=item.gallery_images.0 %}
+                                                    {% if item_photo %}
+                                                        <img src="{{ item_photo.image.url }}"
+                                                            alt="{{ item.name }}"
+                                                            loading="lazy"
+                                                            class="w-100 h-100 object-fit-cover">
+                                                    {% else %}
+                                                        <div class="d-flex align-items-center
+                                                                    justify-content-center
+                                                                    w-100 h-100 text-muted">
+                                                            {% trans "Без фото" %}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </div>
+
+                                            <!-- БЕЙДЖ СПРАВА ЗВЕРХУ -->
+                                            {% if item.badge %}
+                                                <div class="position-absolute top-0 end-0 m-3"
+                                                    style="z-index: 5;">
+
+                                                    <div class="product-badge"
+                                                        style="position: static; top: auto; left: auto; right: auto;">
+
+                                                        <ul class="list-unstyled m-0 p-0">
+                                                            <li class="sale-badge">
+                                                                {{ item.badge }}
+                                                            </li>
+                                                        </ul>
+
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+
+                                        </div>
+
+                                        <!-- ІНФОРМАЦІЯ -->
+                                        <div class="product-info p-3
+                                                    d-flex flex-column flex-grow-1">
+
+                                            <h3 class="product-title mb-3">
+                                                {{ item.name }}
+                                            </h3>
+
+                                            <div class="product-price d-flex flex-wrap
+                                                        align-items-center gap-2 mt-auto">
+
+                                                <span class="text-nowrap">
+                                                    {{ item.price|floatformat:2 }}&nbsp;грн
+                                                </span>
+
+                                                {% if item.old_price and item.old_price > item.price %}
+                                                    <del class="text-nowrap">
+                                                        {{ item.old_price|floatformat:2 }}&nbsp;грн
+                                                    </del>
+                                                {% endif %}
+
+                                            </div>
+
+                                        </div>
+
+                                    </a>
+
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- SHOP DETAILS AREA END -->
+
+{% endblock %}

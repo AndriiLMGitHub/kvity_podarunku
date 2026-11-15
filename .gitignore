@@ -21,6 +21,8 @@ db.sqlite3-journal
 src/staticfiles/
 src/static/
 media/
+/backups/
+backup/
 
 # Test and type-checker caches
 .coverage
@@ -35,3 +37,5 @@ htmlcov/
 .idea/
 .DS_Store
 Thumbs.db
+
+commands.txt

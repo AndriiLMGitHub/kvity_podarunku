@@ -1,0 +1,109 @@
+{% load static i18n %}
+<div class="ltn__modal-area ltn__quick-view-modal-area">
+    <div class="modal fade" id="quick_view_modal" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="{% trans 'Закрити' %}">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            <div class="ltn__quick-view-modal-inner">
+                <div class="modal-product-item">
+                <div class="row">
+                    
+                    <!-- Зображення товару -->
+                    <div class="col-lg-6 col-12">
+                        <!-- 1. ratio та ratio-1x1 роблять контейнер ідеальним квадратом -->
+                        <div class="modal-product-img ratio ratio-1x1">
+                            <div id="qv-badge-container" class="product-badge" style="position: absolute; top: 15px; left: 15px; z-index: 10;">
+                                <!-- Сюди JavaScript динамічно вставить бейдж, якщо він є -->
+                            </div>
+                            <!-- ID для підміни через AJAX -->
+                            <!-- 2. w-100 h-100 та object-fit-cover гарантують заповнення 444x444 без сплющення -->
+                            <img id="qv-image" src="{% static 'img/product/placeholder.png' %}" alt="{% trans 'Зображення букета' %}" class="w-100 h-100 object-fit-cover" />
+                        </div>
+                    </div>
+                    
+                    <!-- Інформація про товар -->
+                    <div class="col-lg-6 col-12">
+                    <div class="modal-product-info">
+                        
+                        <div class="product-ratting">
+                        <ul id="qv-rating-container">
+                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                            <li class="review-total">
+                            <a href="#" id="qv-reviews"> ( 0 {% trans "Відгуків" %} )</a>
+                            </li>
+                        </ul>
+                        </div>
+                        
+                        <h3 id="qv-title">{% trans "Назва композиції" %}</h3>
+                        
+                        <div class="product-price">
+                        <span id="qv-price">$0.00</span>
+                        <del id="qv-old-price"></del>
+                        </div>
+
+                        <div class="modal-product-brief">
+                        <p id="qv-description"></p>
+                        </div>
+
+                        <div class="modal-product-meta ltn__product-details-menu-1">
+                        <ul>
+                            <li>
+                            <strong>{% trans "Категорія" %}:</strong>
+                            <span id="qv-categories">
+                                <!-- Підставляється через JS -->
+                            </span>
+                            </li>
+                        </ul>
+                        </div>
+
+                        <!-- АЛЬТЕРНАТИВНИЙ CALL TO ACTION (ЗАМІСТЬ КОШИКА) -->
+                        <div class="ltn__product-details-menu-2">
+                        <ul>
+                            <li>
+                            <a href="tel:+380936252589" class="theme-btn-1 btn btn-effect-1" id="qv-order-btn">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>{% trans "ЗАМОВИТИ / УТОЧНИТИ" %}</span>
+                            </a>
+                            </li>
+                        </ul>
+                        </div>
+                        
+                        <hr />
+                        
+                        <div class="ltn__social-media">
+                        <ul class="d-flex align-items-center">
+                            <li class="d-flex align-items-center">
+                                {% trans "Слідкуйте за нами" %}:
+                            </li>
+                            <li>
+                                <a href="https://www.facebook.com/share/1CdEPP2ENG/?mibextid=wwXIfr" title="Facebook" class="blog-share-icon">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.instagram.com/kvity_podarunky/?hl=uk" title="Instagram" class="blog-share-icon">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        </div>
+                        
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>

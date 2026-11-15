@@ -1,0 +1,77 @@
+{% load static i18n %}
+<!doctype html>
+<html class="no-js" lang="{{ LANGUAGE_CODE|default:'uk' }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    
+    <!-- Динамічний SEO-блок -->
+    <title>{% block title %}Rosela - {% trans "Магазин квітів" %}{% endblock title %}</title>
+    <meta name="description" content="{% block meta_description %}{% trans 'Авторські букети та подарунки з доставкою.' %}{% endblock meta_description %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    
+    <!-- Захист від індексації тестового сайту (прибрати на продакшені) -->
+    <meta name="robots" content="noindex, follow" />
+
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" type="image/x-icon" />
+    
+    <!-- Глобальні CSS -->
+    <link rel="stylesheet" href="{% static 'css/font-icons.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/plugins.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
+
+    <!-- Блок для CSS конкретної сторінки (наприклад, стилі платіжної форми тільки для checkout.html) -->
+    {% block extra_css %}{% endblock extra_css %}
+  </head>
+
+  <body>
+    <!-- Preloader -->
+    {% include 'includes/loaders/_preloader.html' %}
+
+    <div class="body-wrapper">
+      
+      {% block header %}
+        {% include 'includes/layout/_header.html' with header_class="ltn__header-transparent" menu_color_class="menu-color-white" logo_url="img/logo-light.png" sticky_logo_url="img/logo-dark.png" %}
+      {% endblock header %}
+
+      <!-- Utilize Cart Menu Start -->
+      {% comment %} {% include 'includes/_cart_menu.html' %} {% endcomment %}
+      <!-- Utilize Cart Menu End -->
+
+      <!-- Utilize Mobile Menu Start -->
+      {% include 'includes/layout/_mobile_menu.html' %}
+      <!-- Utilize Mobile Menu End -->
+      
+
+      <div class="ltn__utilize-overlay"></div>
+
+      <!-- ОСНОВНИЙ КОНТЕНТ СТОРІНКИ -->
+      <main>
+        {% block content %}{% endblock content %}
+      </main>
+
+      <!-- ПЕРЕВАГИ (Features) -->
+      {% include 'includes/layout/_features.html' %}
+
+        
+      <!-- FOOTER -->
+      {% include 'includes/layout/_footer.html' %}
+      
+      <!-- MODALS (Завантажуються один раз на весь сайт) -->
+      {% include 'includes/modals/_quick_view_modal.html' %}
+      {% include 'includes/modals/_add_to_cart_modal.html' %}
+      {% include 'includes/modals/_wishlist_modal.html' %}
+      
+    </div>
+
+    <!-- Глобальні JS Plugins -->
+    <script src="{% static 'js/plugins.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/custom/quick_view.js' %}"></script>
+    
+    <!-- Блок для JS конкретної сторінки (наприклад, Stripe JS тільки для кошика) -->
+    {% block extra_js %}{% endblock extra_js %}
+  </body>
+</html>

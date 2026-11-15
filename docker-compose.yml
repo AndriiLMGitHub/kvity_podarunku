@@ -1,0 +1,123 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true
+    restart: unless-stopped
+    environment:
+      DEBUG: ${DEBUG:-False}
+      SECRET_KEY: ${SECRET_KEY:-local-development-only-change-this-secret-key}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DB_NAME: ${DB_NAME:-flower_site}
+      DB_USER: ${DB_USER:-flower_site}
+      DB_PASSWORD: ${DB_PASSWORD:-local-db-password}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-3306}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      EMAIL_BACKEND: ${EMAIL_BACKEND:-django.core.mail.backends.smtp.EmailBackend}
+      EMAIL_HOST: ${EMAIL_HOST:-smtp.gmail.com}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-True}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - static_files:/app/src/staticfiles
+    command:
+      - sh
+      - -c
+      - >-
+        python manage.py migrate --noinput
+        && python manage.py collectstatic --noinput --upload-unhashed-files
+        && exec gunicorn config.wsgi:application
+        --bind 0.0.0.0:8000
+        --workers 1
+        --access-logfile -
+        --error-logfile -
+    stop_grace_period: 30s
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import socket; socket.create_connection(('127.0.0.1', 8000), timeout=2).close()"
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+
+  nginx:
+    image: nginx:1.28-alpine
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    depends_on:
+      web:
+        condition: service_healthy
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_files:/usr/share/nginx/html/static:ro
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-flower_site}
+      MYSQL_USER: ${DB_USER:-flower_site}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-local-db-password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-local-root-password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping --host=127.0.0.1 --user=root --password="$${MYSQL_ROOT_PASSWORD}" --silent
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    stop_grace_period: 1m
+
+  db-backup:
+    image: mysql:8.4
+    entrypoint:
+      - /bin/sh
+      - /usr/local/bin/db-backup.sh
+    restart: unless-stopped
+    user: "0:0"
+    environment:
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_NAME: ${DB_NAME:-flower_site}
+      DB_USER: ${DB_USER:-flower_site}
+      DB_PASSWORD: ${DB_PASSWORD:-local-db-password}
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backup/backup.sh:/usr/local/bin/db-backup.sh:ro
+      - ./backups:/backups
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  mysql_data:
+  static_files:
