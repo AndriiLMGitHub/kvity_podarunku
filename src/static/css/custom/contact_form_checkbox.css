@@ -1,0 +1,67 @@
+/* Контейнер чекбокса */
+.custom-checkbox-wrapper {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    user-select: none;
+    line-height: 1.5;
+}
+
+/* Ховаємо оригінальний системний чекбокс */
+.custom-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Кастомний квадратик чекбокса */
+.custom-checkbox-box {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    height: 18px;
+    width: 18px;
+    background-color: #ffffff;
+    border: 2px solid #dcdcdc;
+    border-radius: 4px;
+    transition: all 0.25s ease-in-out;
+}
+
+/* Ефект при наведенні миші */
+.custom-checkbox-wrapper:hover .custom-checkbox-box {
+    border-color: #7cb342;
+}
+
+/* Стилі для вибраного (checked) стану */
+.custom-checkbox-input:checked~.custom-checkbox-box {
+    background-color: #7cb342;
+    border-color: #7cb342;
+    box-shadow: 0 2px 5px rgba(124, 179, 66, 0.3);
+}
+
+/* Малюємо галочку усередині квадратика */
+.custom-checkbox-box::after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox-input:checked~.custom-checkbox-box::after {
+    display: block;
+}
+
+.custom-checkbox-wrapper .custom-checkbox-box::after {
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}

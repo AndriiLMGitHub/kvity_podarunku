@@ -126,6 +126,67 @@ gzip -dc ./backups/flower_site_20261115T120000Z.sql.gz \
 
 Відновлення замінює таблиці та дані з дампа. Перед ним збережіть поточний стан бази. Копії в `./backups` знаходяться на тому ж хості, що й застосунок; для захисту від втрати сервера регулярно копіюйте їх у зашифроване зовнішнє або віддалене сховище.
 
-## Розгортання на сервері
+## Розгортання на Render
 
-Поточний Nginx налаштований на HTTP і не містить TLS-сертифікатів. Для публічного HTTPS-сайту потрібні домен, TLS-сертифікат і відповідне налаштування Nginx. Перед публічним запуском також встановіть власні секрети в `.env`, задайте `DEBUG=False` і вкажіть домен у `ALLOWED_HOSTS`.
+Цей проєкт використовує MySQL. Render надає керований PostgreSQL, але для збереження поточної MySQL-конфігурації використовуйте окремий приватний MySQL-сервіс із постійним диском. Такий MySQL-сервіс і диск потребують платного плану. Якщо потрібне безкоштовне кероване сховище Render, спершу потрібно перенести проєкт із MySQL на PostgreSQL.
+
+Render збирає застосунок із Git-репозиторію, а не з локального `.env` або `docker-compose.yml`. Перед деплоєм переконайтеся, що потрібний код і папка `src/static/` додані до Git та відправлені в обрану гілку. `src/static/` містить вихідні CSS, JS і зображення; не додавайте до Git `.env` або `backups/`.
+
+### 1. Створіть MySQL-сервіс
+
+1. У Render створіть власну копію офіційного [Render MySQL template](https://github.com/render-examples/mysql) або скористайтеся інструкцією [Deploy MySQL](https://render.com/docs/deploy-mysql).
+2. У Dashboard виберіть **New → Private Service**, під’єднайте копію репозиторію, встановіть **Language: Docker** і виберіть ту саму гілку, що й для вебзастосунку.
+3. Виберіть регіон і платний план. У змінних середовища MySQL-сервісу задайте:
+
+   | Змінна | Значення |
+   | --- | --- |
+   | `MYSQL_DATABASE` | Назва бази, наприклад `flower_site` |
+   | `MYSQL_USER` | Окремий користувач застосунку, наприклад `flower_site` (не `root`) |
+   | `MYSQL_PASSWORD` | Надійний пароль цього користувача |
+   | `MYSQL_ROOT_PASSWORD` | Окремий надійний пароль `root` |
+
+4. Додайте диск у налаштуваннях сервісу: **Mount Path** — `/var/lib/mysql`; виберіть розмір, наприклад 10 GB. Це обов’язковий шлях для даних MySQL.
+5. Створіть сервіс і дочекайтеся статусу **Live**. Скопіюйте його внутрішню адресу з Dashboard, наприклад `mysql-foo:3306`. Для `DB_HOST` потрібна лише частина до двокрапки (`mysql-foo`).
+
+### 2. Створіть вебсервіс
+
+1. У Render виберіть **New → Web Service** і під’єднайте репозиторій цього сайту.
+2. Виберіть гілку з актуальним кодом, регіон та **Language: Docker**. Вкажіть Dockerfile `./Dockerfile` і контекст `.`. Не запускайте на Render локальний `docker-compose.yml` чи окремий Nginx: Render надає зовнішній HTTP/HTTPS proxy.
+3. У полі **Docker Command** (розділ **Advanced**) задайте команду запуску:
+
+   ```sh
+   /bin/sh -c 'python manage.py migrate --noinput && python manage.py collectstatic --noinput --upload-unhashed-files && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-10000} --workers 1 --access-logfile - --error-logfile -'
+   ```
+
+   Render передає порт через `PORT`. Команда запускає міграції, збирає static-файли та прив’язує Gunicorn до потрібного Render порту.
+
+4. У **Environment** вебсервісу додайте:
+
+   | Змінна | Значення |
+   | --- | --- |
+   | `DEBUG` | `False` |
+   | `SECRET_KEY` | Створіть секретне значення через **Generate** або згенеруйте окремо |
+   | `ALLOWED_HOSTS` | Домен сервісу, наприклад `flower-shop.onrender.com`; кілька доменів — через кому без пробілів |
+   | `DB_NAME` | Те саме значення, що й `MYSQL_DATABASE` у MySQL-сервісі |
+   | `DB_USER` | Те саме значення, що й `MYSQL_USER` |
+   | `DB_PASSWORD` | Те саме значення, що й `MYSQL_PASSWORD` |
+   | `DB_HOST` | Внутрішній hostname MySQL-сервісу без порту |
+   | `DB_PORT` | `3306` |
+
+   `MYSQL_ROOT_PASSWORD` вебсервісу не потрібен. `PORT` задає Render автоматично. Якщо сайт використовує Cloudinary чи SMTP, додайте відповідні змінні `CLOUDINARY_*` та `EMAIL_*`.
+
+5. Створіть Web Service та перевірте **Events** і **Logs**. Після успішного деплою відкрийте адресу `*.onrender.com`. У Render Shell можна створити адміністратора:
+
+   ```sh
+   python manage.py createsuperuser
+   ```
+
+### Важливо для Render
+
+- WhiteNoise роздає зібрані static-файли; його middleware розміщений одразу після `SecurityMiddleware`. Якщо в Render змінювали налаштування, переконайтеся, що використовується останній коміт.
+- Переконайтеся, що в Git є всі потрібні файли проєкту, особливо `src/static/`; Render не побачить локальні або проігноровані Git файли.
+- Новий MySQL-сервіс починається з порожньої бази. Якщо у локальній базі є потрібні дані, експортуйте їх і перенесіть до першого запуску сайту на Render.
+- Локальний сервіс `db-backup` із Compose на Render не запускається. Налаштуйте окремі регулярні `mysqldump`-копії у віддалене сховище. Для власного MySQL Render не рекомендує відновлювати базу зі snapshot диска.
+- Render завершує TLS для Web Service автоматично. Для власного домену додайте його в налаштування доменів Render і в `ALLOWED_HOSTS`.
+
+Документація Render: [Docker](https://render.com/docs/docker), [MySQL](https://render.com/docs/deploy-mysql), [Web Services і порт `PORT`](https://render.com/docs/web-services), [диски](https://render.com/docs/disks), [змінні середовища](https://render.com/docs/configure-environment-variables).

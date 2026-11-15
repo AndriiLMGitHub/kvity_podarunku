@@ -1,0 +1,94 @@
+/* Будь-яке фото чи відео, яке користувач вставить через адмінку, автоматично стиснеться під розмір екрана смартфона */
+.post-content-body img,
+.post-content-body iframe,
+.post-content-body video {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 6px;
+}
+
+/* Плавність анімації */
+.transition-all {
+    transition: all 0.3s ease-in-out;
+}
+
+/* =========================================
+   БАЗОВИЙ СТАН (Світлий, приємний вигляд) 
+   ========================================= */
+.custom-category-widget .cat-item {
+    background-color: #f8f9fa;
+    /* Світло-сірий фон замість чорного */
+    color: #333333;
+    /* Темно-сірий текст */
+    /* Кути залишаємо гострими згідно з макетом */
+}
+
+/* Квадрат з цифрою в базовому стані */
+.custom-category-widget .cat-count {
+    background-color: #e9ecef;
+    /* Трохи темніший сірий для візуального відділення */
+    min-width: 70px;
+    /* Фіксована ширина квадрата */
+    transition: background-color 0.3s ease;
+}
+
+
+/* =========================================
+   СТАН ПРИ НАВЕДЕННІ (Зелений акцент) 
+   ========================================= */
+.custom-category-widget .cat-item:hover {
+    background-color: #8cc63f;
+    /* Твій фірмовий зелений */
+    color: #ffffff;
+    /* Текст стає білим */
+}
+
+/* Квадрат з цифрою при наведенні */
+.custom-category-widget .cat-item:hover .cat-count {
+    /* Накладаємо 15% чорного поверх зеленого фону. 
+       Це створює ідеальний ефект "темнішого зеленого", як на твоєму макеті */
+    background-color: rgba(0, 0, 0, 0.15);
+    color: #ffffff;
+}
+
+
+/* Приємніший, м'якший колір шрифту для назви категорії в базовому стані */
+.custom-category-widget .cat-name {
+    color: #5c636a;
+    /* Сучасний м'який графітовий відтінок */
+    transition: color 0.3s ease-in-out;
+}
+
+/* При наведенні на ВЕСЬ блок (.cat-item) текст назви стає чисто білим */
+.custom-category-widget .cat-item:hover .cat-name {
+    color: #ffffff;
+}
+
+/* Базовий стан: світлий квадрат з гострими кутами та графітовою іконкою */
+.custom-social-list a {
+    width: 42px;
+    height: 42px;
+    background-color: #ffffff;
+    color: #5c636a;
+    /* М'який колір іконки в спокійному стані */
+    border: 1px solid #e9ecef;
+    /* Тонка світла рамка */
+    border-radius: 0;
+    /* Абсолютно гострі кути */
+    font-size: 18px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Стан ПРИ НАВЕДЕННІ: зелений квадрат, біла іконка */
+.custom-social-list a:hover {
+    background-color: #8cc63f;
+    /* Фірмовий зелений фон */
+    color: #ffffff;
+    /* Чисто біла іконка */
+    border-color: #8cc63f;
+    /* Рамка також стає зеленою */
+    transform: translateY(-3px);
+    /* Легкий ефект підняття */
+    box-shadow: 0 4px 10px rgba(140, 198, 63, 0.3);
+    /* Ніжна зелена тінь */
+}

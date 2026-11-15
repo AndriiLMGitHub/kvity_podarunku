@@ -1,0 +1,161 @@
+/* =========================================
+   1. ЛОГОТИП (Sticky Header)
+   ========================================= */
+.site-logo .logo-sticky {
+    display: none !important;
+}
+
+.site-logo .logo-default {
+    display: block !important;
+}
+
+.sticky-active .site-logo .logo-default {
+    display: none !important;
+}
+
+.sticky-active .site-logo .logo-sticky {
+    display: block !important;
+}
+
+
+/* =========================================
+   2. ЗОБРАЖЕННЯ ТОВАРІВ
+   ========================================= */
+.custom-product-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* =========================================
+   3. УНІВЕРСАЛЬНИЙ ФІКС ДЛЯ SLICK SLIDER 
+      (Блоки однакової висоти: блог та товари)
+   ========================================= */
+.ltn__blog-slider-one-active .slick-track,
+.ltn__tab-product-slider-one-active .slick-track {
+    display: flex !important;
+}
+
+.ltn__blog-slider-one-active .slick-slide,
+.ltn__tab-product-slider-one-active .slick-slide {
+    height: auto !important;
+    display: flex !important;
+}
+
+.ltn__blog-slider-one-active .slick-slide>div,
+.ltn__tab-product-slider-one-active .slick-slide>div {
+    width: 100%;
+    display: flex;
+}
+
+
+/* Базовий стан іконки: сіра рамка, квадратна форма */
+.blog-share-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e4e4e4;
+    /* Сіра рамка */
+    color: #5c646d;
+    /* Сірий колір іконки */
+    background-color: transparent;
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    /* Важливо: приховує зелений фон, поки він "за межами" кнопки */
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Базовий стан іконки: сіра рамка, квадратна форма */
+.blog-share-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e4e4e4;
+    /* Сіра рамка */
+    color: #5c646d;
+    /* Сірий колір іконки */
+    background-color: transparent;
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    /* Важливо: приховує зелений фон, поки він "за межами" кнопки */
+    /* Додано transform у transition для плавності підняття всієї кнопки */
+    transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Прихований зелений фон для анімації */
+.blog-share-icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--ltn__secondary-color, #80b500);
+    z-index: -1;
+
+    /* Анімація: ховаємо фон, стискаючи його по вертикалі вниз */
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Стан при наведенні курсору на кнопку */
+.blog-share-icon:hover {
+    color: #ffffff !important;
+    /* Іконка стає білою */
+    border-color: var(--ltn__secondary-color, #80b500);
+    /* Рамка зеленіє */
+    /* ТУТ МАГІЯ ПІДНЯТТЯ: зсуваємо весь блок на 3 пікселі вгору */
+    transform: translateY(-3px);
+    /* Опціонально: додаємо легку тінь, щоб підсилити ефект левітації */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.blog-share-icon:hover::before {
+    transform: scaleY(1);
+}
+
+/* Щоб сама іконка всередині (буква f або камера) не підстрибувала окремо від рамки, 
+   прибираємо попередній транзішн з тегу i, адже тепер піднімається ВСЯ кнопка */
+.blog-share-icon i {
+    transition: none;
+}
+
+
+/* Базовий стан кнопки закриття */
+.close {
+    opacity: 0.5;
+    /* Трохи приглушена у спокійному стані */
+    transition: all 0.3s ease-in-out;
+    /* Плавна анімація для всіх змін */
+    display: inline-block;
+    /* Важливо для того, щоб спрацював transform */
+}
+
+/* Стан при наведенні (Hover) */
+.close:hover {
+    opacity: 1;
+    /* Робимо повністю видимою */
+    color: var(--ltn__secondary-color, #dc3545);
+    /* Фарбуємо у фірмовий зелений (або червоний) */
+    transform: rotate(90deg);
+    /* Елегантний поворот хрестика */
+    outline: none;
+    /* Прибираємо стандартну рамку браузера при кліку */
+}
+
+/* Опціонально: прибираємо рамку при фокусі (кліку) */
+.close:focus {
+    outline: none;
+    box-shadow: none;
+}
