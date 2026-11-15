@@ -22,7 +22,6 @@ src/staticfiles/
 src/static/
 media/
 /backups/
-backup/
 
 # Test and type-checker caches
 .coverage
