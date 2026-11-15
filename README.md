@@ -128,65 +128,76 @@ gzip -dc ./backups/flower_site_20261115T120000Z.sql.gz \
 
 ## Розгортання на Render
 
-Цей проєкт використовує MySQL. Render надає керований PostgreSQL, але для збереження поточної MySQL-конфігурації використовуйте окремий приватний MySQL-сервіс із постійним диском. Такий MySQL-сервіс і диск потребують платного плану. Якщо потрібне безкоштовне кероване сховище Render, спершу потрібно перенести проєкт із MySQL на PostgreSQL.
+Цей проєкт локально використовує MySQL. Для безкоштовного тестового розгортання можна використати Render PostgreSQL: якщо задано `DATABASE_URL`, Django під’єднується до PostgreSQL; без нього локальний Docker Compose продовжує використовувати MySQL. Render безкоштовно не надає MySQL із постійним диском.
 
-Render збирає застосунок із Git-репозиторію, а не з локального `.env` або `docker-compose.yml`. Перед деплоєм переконайтеся, що потрібний код і папка `src/static/` додані до Git та відправлені в обрану гілку. `src/static/` містить вихідні CSS, JS і зображення; не додавайте до Git `.env` або `backups/`.
+Render збирає застосунок із Git, а не з локального `.env`. Перед деплоєм додайте до потрібної гілки всі файли застосунку, зокрема `src/static/`, і відправте її в репозиторій. Не додавайте `.env` або `backups/`.
 
-### 1. Створіть MySQL-сервіс
+### 1. Створіть базу даних
 
-1. У Render створіть власну копію офіційного [Render MySQL template](https://github.com/render-examples/mysql) або скористайтеся інструкцією [Deploy MySQL](https://render.com/docs/deploy-mysql).
-2. У Dashboard виберіть **New → Private Service**, під’єднайте копію репозиторію, встановіть **Language: Docker** і виберіть ту саму гілку, що й для вебзастосунку.
-3. Виберіть регіон і платний план. У змінних середовища MySQL-сервісу задайте:
+#### Безкоштовно: Render PostgreSQL (для демо)
 
-   | Змінна | Значення |
-   | --- | --- |
-   | `MYSQL_DATABASE` | Назва бази, наприклад `flower_site` |
-   | `MYSQL_USER` | Окремий користувач застосунку, наприклад `flower_site` (не `root`) |
-   | `MYSQL_PASSWORD` | Надійний пароль цього користувача |
-   | `MYSQL_ROOT_PASSWORD` | Окремий надійний пароль `root` |
+1. У Render виберіть **New → Postgres**, план **Free**, регіон для бази. Скопіюйте **Internal Database URL**.
+2. Застосунок має використовувати цю URL у змінній `DATABASE_URL` (див. крок 3).
+3. Нова база порожня: міграції створять таблиці, але дані з локальної MySQL автоматично не перенесуться.
 
-4. Додайте диск у налаштуваннях сервісу: **Mount Path** — `/var/lib/mysql`; виберіть розмір, наприклад 10 GB. Це обов’язковий шлях для даних MySQL.
-5. Створіть сервіс і дочекайтеся статусу **Live**. Скопіюйте його внутрішню адресу з Dashboard, наприклад `mysql-foo:3306`. Для `DB_HOST` потрібна лише частина до двокрапки (`mysql-foo`).
+Безкоштовна база PostgreSQL Render має обмежений термін дії — **30 днів**. Це варіант для демо або тестування, а не для постійного зберігання даних.
+
+#### MySQL (платний варіант)
+
+1. Створіть власну копію офіційного [Render MySQL template](https://github.com/render-examples/mysql), як описано в [інструкції Render](https://render.com/docs/deploy-mysql).
+2. Створіть **Private Service** із **Language: Docker** у тому самому регіоні, що й вебсервіс. Задайте в MySQL-сервісі `MYSQL_DATABASE`, `MYSQL_USER` (не `root`), `MYSQL_PASSWORD` і окремий `MYSQL_ROOT_PASSWORD`.
+3. Додайте постійний диск із **Mount Path** `/var/lib/mysql` та виберіть платний план. Дочекайтеся статусу **Live** і скопіюйте внутрішню адресу MySQL, наприклад `mysql-foo:3306`. Для `DB_HOST` потрібна лише частина `mysql-foo`.
 
 ### 2. Створіть вебсервіс
 
-1. У Render виберіть **New → Web Service** і під’єднайте репозиторій цього сайту.
-2. Виберіть гілку з актуальним кодом, регіон та **Language: Docker**. Вкажіть Dockerfile `./Dockerfile` і контекст `.`. Не запускайте на Render локальний `docker-compose.yml` чи окремий Nginx: Render надає зовнішній HTTP/HTTPS proxy.
-3. У полі **Docker Command** (розділ **Advanced**) задайте команду запуску:
+1. Виберіть **New → Web Service**, під’єднайте репозиторій сайту та потрібну гілку.
+2. Виберіть **Language: Docker**, Dockerfile `./Dockerfile` і контекст `.`. Обидва сервіси мають бути в одному регіоні. Не запускайте на Render `docker-compose.yml` або локальний Nginx: Render надає власний HTTP/HTTPS proxy.
+3. У **Advanced → Docker Command** вставте:
 
    ```sh
    /bin/sh -c 'python manage.py migrate --noinput && python manage.py collectstatic --noinput --upload-unhashed-files && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-10000} --workers 1 --access-logfile - --error-logfile -'
    ```
 
-   Render передає порт через `PORT`. Команда запускає міграції, збирає static-файли та прив’язує Gunicorn до потрібного Render порту.
+   Команда застосовує міграції, збирає static-файли та прив’язує Gunicorn до порту `PORT`, який задає Render.
 
-4. У **Environment** вебсервісу додайте:
+4. У **Environment** вебсервісу додайте спільні змінні:
 
    | Змінна | Значення |
    | --- | --- |
    | `DEBUG` | `False` |
-   | `SECRET_KEY` | Створіть секретне значення через **Generate** або згенеруйте окремо |
+   | `SECRET_KEY` | Створіть секретне значення через **Generate** |
    | `ALLOWED_HOSTS` | Домен сервісу, наприклад `flower-shop.onrender.com`; кілька доменів — через кому без пробілів |
-   | `DB_NAME` | Те саме значення, що й `MYSQL_DATABASE` у MySQL-сервісі |
-   | `DB_USER` | Те саме значення, що й `MYSQL_USER` |
-   | `DB_PASSWORD` | Те саме значення, що й `MYSQL_PASSWORD` |
-   | `DB_HOST` | Внутрішній hostname MySQL-сервісу без порту |
-   | `DB_PORT` | `3306` |
 
-   `MYSQL_ROOT_PASSWORD` вебсервісу не потрібен. `PORT` задає Render автоматично. Якщо сайт використовує Cloudinary чи SMTP, додайте відповідні змінні `CLOUDINARY_*` та `EMAIL_*`.
+   Додайте **один** набір змінних для обраної бази:
 
-5. Створіть Web Service та перевірте **Events** і **Logs**. Після успішного деплою відкрийте адресу `*.onrender.com`. У Render Shell можна створити адміністратора:
+   - Для безкоштовного PostgreSQL: `DATABASE_URL` — **Internal Database URL** із кроку 1. Не додавайте її до репозиторію.
+   - Для MySQL: `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST` (внутрішній hostname без порту) та `DB_PORT=3306`. `DB_USER` і пароль мають відповідати `MYSQL_USER` та `MYSQL_PASSWORD` у MySQL-сервісі.
 
-   ```sh
-   python manage.py createsuperuser
-   ```
+   `DATABASE_URL` має пріоритет над MySQL-змінними. `PORT` задається Render автоматично. Якщо використовуються медіафайли або надсилання листів, додайте потрібні `CLOUDINARY_*` і `EMAIL_*`.
 
-### Важливо для Render
+5. Створіть Web Service, дочекайтеся успішного деплою та відкрийте його адресу `*.onrender.com`. HTTPS для Web Service надає Render.
 
-- WhiteNoise роздає зібрані static-файли; його middleware розміщений одразу після `SecurityMiddleware`. Якщо в Render змінювали налаштування, переконайтеся, що використовується останній коміт.
-- Переконайтеся, що в Git є всі потрібні файли проєкту, особливо `src/static/`; Render не побачить локальні або проігноровані Git файли.
-- Новий MySQL-сервіс починається з порожньої бази. Якщо у локальній базі є потрібні дані, експортуйте їх і перенесіть до першого запуску сайту на Render.
-- Локальний сервіс `db-backup` із Compose на Render не запускається. Налаштуйте окремі регулярні `mysqldump`-копії у віддалене сховище. Для власного MySQL Render не рекомендує відновлювати базу зі snapshot диска.
-- Render завершує TLS для Web Service автоматично. Для власного домену додайте його в налаштування доменів Render і в `ALLOWED_HOSTS`.
+### Створення адміністратора на Free-плані
 
-Документація Render: [Docker](https://render.com/docs/docker), [MySQL](https://render.com/docs/deploy-mysql), [Web Services і порт `PORT`](https://render.com/docs/web-services), [диски](https://render.com/docs/disks), [змінні середовища](https://render.com/docs/configure-environment-variables).
+Render Free не надає Shell для вебсервісу. Для створення адміністратора можна запустити management-команду локально з Docker, під’єднавшись до **External Database URL** PostgreSQL:
+
+```sh
+printf 'External Database URL (input hidden): '
+read -r -s DATABASE_URL
+printf '\n'
+export DATABASE_URL
+docker compose run --rm --build --no-deps -e DATABASE_URL web python manage.py createsuperuser
+unset DATABASE_URL
+```
+
+Коли команда попросить, вставте External Database URL із Render і натисніть Enter. Цей URL містить пароль — не публікуйте його. Для зовнішнього підключення Render вимагає TLS; використовуйте URL, скопійовану з Dashboard.
+
+### Обмеження безкоштовного плану
+
+- Free Web Service вимикається після 15 хвилин без запитів; перше відкриття після простою може зайняти близько хвилини.
+- Файлова система Free Web Service тимчасова. Для медіафайлів налаштуйте Cloudinary; не зберігайте їх лише на диску вебконтейнера.
+- Free PostgreSQL закінчується через 30 днів. Робіть окремі експорти потрібних даних.
+- Render Free блокує вихідні SMTP-з’єднання на портах `25`, `465` і `587`. Для листів потрібен email API через HTTPS або платний план.
+- Для постійного сайту з MySQL використовуйте платний MySQL-сервіс із диском; диск MySQL має бути `/var/lib/mysql`. Render не радить відновлювати власну MySQL-базу зі snapshot диска — використовуйте `mysqldump`.
+
+Офіційні інструкції: [Docker на Render](https://render.com/docs/docker), [Django](https://render.com/docs/deploy-django), [безкоштовний план](https://render.com/docs/free), [Render PostgreSQL](https://render.com/docs/postgresql-creating-connecting), [Render MySQL](https://render.com/docs/deploy-mysql).
