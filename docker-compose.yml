@@ -14,6 +14,9 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-local-db-password}
       DB_HOST: ${DB_HOST:-db}
       DB_PORT: ${DB_PORT:-3306}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-}
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
@@ -30,17 +33,6 @@ services:
         condition: service_healthy
     volumes:
       - static_files:/app/src/staticfiles
-    command:
-      - sh
-      - -c
-      - >-
-        python manage.py migrate --noinput
-        && python manage.py collectstatic --noinput --upload-unhashed-files
-        && exec gunicorn config.wsgi:application
-        --bind 0.0.0.0:8000
-        --workers 1
-        --access-logfile -
-        --error-logfile -
     stop_grace_period: 30s
     healthcheck:
       test:
