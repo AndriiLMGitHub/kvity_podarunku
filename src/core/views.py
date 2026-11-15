@@ -19,7 +19,7 @@ def home_view(request: http.HttpRequest) -> http.HttpResponse:
     """
     logger.info("Homepage requested")
     categories = Category.objects.filter(is_active=True, parent=None).order_by('sort_order')
-    portfolio_works = PortfolioWork.objects.filter(is_published=True).order_by('order')[:3]
+    portfolio_works = PortfolioWork.objects.filter(is_published=True).order_by('order')
     posts = BlogPost.objects.filter(
         is_published=True,
         published_at__lte=timezone.now(),
