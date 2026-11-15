@@ -1,9 +1,12 @@
 import logging
+
+from django.utils import timezone
 from django.shortcuts import render
 from django import http
 
 from modules.blog.models import BlogPost
 from modules.portfolio.models import PortfolioWork
+from modules.reviews.models import Testimonial
 from modules.shop.models import Category
 
 
@@ -17,11 +20,16 @@ def home_view(request: http.HttpRequest) -> http.HttpResponse:
     logger.info("Homepage requested")
     categories = Category.objects.filter(is_active=True, parent=None).order_by('sort_order')
     portfolio_works = PortfolioWork.objects.filter(is_published=True).order_by('order')[:3]
-    posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')[:3]
+    posts = BlogPost.objects.filter(
+        is_published=True,
+        published_at__lte=timezone.now(),
+    ).order_by('-published_at')[:3]
+    testimonials = Testimonial.objects.filter(is_published=True).order_by('order')
     context = {
         'categories': categories,
         'portfolio_works': portfolio_works,
         'latest_posts': posts,
+        'testimonials': testimonials,
     }
     return render(request, 'pages/index.html', context)
 

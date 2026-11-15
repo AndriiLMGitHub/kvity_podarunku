@@ -1,0 +1,29 @@
+services:
+  test-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: flower_site_test
+      POSTGRES_USER: flower_test
+      POSTGRES_PASSWORD: test-only-password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flower_test -d flower_site_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://flower_test:test-only-password@test-db:5432/flower_site_test
+      SECRET_KEY: test-only-secret-key
+      DEBUG: "False"
+      ALLOWED_HOSTS: localhost,127.0.0.1
+    depends_on:
+      test-db:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - python manage.py makemigrations --check --dry-run && python manage.py test --verbosity=2

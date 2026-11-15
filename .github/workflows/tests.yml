@@ -1,0 +1,25 @@
+name: Django tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run migrations check and Django test suite
+        run: >-
+          docker compose -p flower-site-ci -f docker-compose.test.yml
+          up --build --abort-on-container-exit --exit-code-from tests
+
+      - name: Remove test containers
+        if: always()
+        run: >-
+          docker compose -p flower-site-ci -f docker-compose.test.yml
+          down --remove-orphans
