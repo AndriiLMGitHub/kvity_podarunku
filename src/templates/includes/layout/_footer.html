@@ -53,7 +53,7 @@
                             <ul>
                                 <li>
                                     <!-- Додаємо border, заокруглення і гарантуємо правильні розміри -->
-                                    <a href="#" title="Facebook" target="_blank" rel="noopener noreferrer" 
+                                    <a href="https://www.facebook.com/share/1CdEPP2ENG/?mibextid=wwXIfr" title="Facebook" target="_blank" rel="noopener noreferrer" 
                                     style="border: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
                                         <i class="fab fa-facebook-f"></i>
                                     </a>
@@ -82,9 +82,9 @@
                         <div class="footer-menu">
                             <ul>
                                 <li><a href="{% url 'index' %}">{% trans "Головна" %}</a></li>
-                                <li><a href="#">{% trans "Про нас" %}</a></li>
-                                <li><a href="#">{% trans "Магазин квітів" %}</a></li>
-                                <li><a href="#">{% trans "Новини та блог" %}</a></li>
+                                <li><a href="{% url 'about' %}">{% trans "Про нас" %}</a></li>
+                                <li><a href="{% url 'product_list' %}">{% trans "Магазин квітів" %}</a></li>
+                                <li><a href="{% url 'blog_list' %}">{% trans "Новини та блог" %}</a></li>
                                 <li><a href="{% url 'contact' %}">{% trans "Контакти" %}</a></li>
                             </ul>
                         </div>
@@ -97,10 +97,10 @@
                         <h4 class="footer-title">{% trans "Покупцям" %}</h4>
                         <div class="footer-menu">
                             <ul>
-                                <li><a href="#">{% trans "Доставка та оплата" %}</a></li>
-                                <li><a href="#">{% trans "Оформлення заходів" %}</a></li>
-                                <li><a href="#">{% trans "Догляд за квітами" %}</a></li>
-                                <li><a href="#">{% trans "FAQ (Питання)" %}</a></li>
+                                <li><a href="{% url 'delivery_payment' %}">{% trans "Доставка та оплата" %}</a></li>
+                                {% comment %} <li><a href="#">{% trans "Оформлення заходів" %}</a></li>
+                                <li><a href="#">{% trans "Догляд за квітами" %}</a></li> {% endcomment %}
+                                <li><a href="{% url 'faq' %}">{% trans "FAQ (Питання)" %}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -149,11 +149,11 @@
                 <div class="col-md-6 col-12">
                     <div class="ltn__copyright-design clearfix">
                         <p>
-                            &copy; <span class="current-year"></span> <strong>Rosela</strong>. {% trans "Усі права захищено." %}
+                            &copy; <span class="current-year"></span> <strong>Квіти подарунки</strong>. {% trans "Усі права захищено." %}
                         </p>
                     </div>
                 </div>
-                <div class="col-md-6 col-12 align-self-center">
+                {% comment %} <div class="col-md-6 col-12 align-self-center">
                     <div class="ltn__copyright-menu text-right text-end">
                         <ul>
                             <li><a href="#">{% trans "Умови використання" %}</a></li>
@@ -161,7 +161,7 @@
                             <li><a href="#">{% trans "Публічна оферта" %}</a></li>
                         </ul>
                     </div>
-                </div>
+                </div> {% endcomment %}
             </div>
         </div>
     </div>

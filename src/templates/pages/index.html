@@ -107,14 +107,15 @@
     </div>
     
     {% if portfolio_works %}
-      <div id="portfolio-slider" class="ltn__image-slider-2-active slick-arrow-1 slick-arrow-1-inner">
-          {% for work in portfolio_works %}
-            <!-- ВІДСТУПИ МІЖ СЛАЙДАМИ -->
-            <div class="px-3">
+    <div id="portfolio-slider"
+        class="ltn__image-slider-2-active slick-arrow-1 slick-arrow-1-inner">
+        {% for work in portfolio_works %}
+            <div class="px-2">
                 <div class="ltn__img-slide-item-2">
                     {% if work.image %}
                         <a href="{{ work.image.url }}"
                           data-rel="lightcase:myCollection"
+                          data-lc-options='{"type":"image","showCaption":false,"maxWidth":1400,"maxHeight":900}'
                           title="{{ work.title }}">
                             <img src="{{ work.image.url }}"
                                 alt="{{ work.title }}"
@@ -123,19 +124,19 @@
                         </a>
                     {% else %}
                         <a href="{% static 'img/product/placeholder.png' %}"
-                          data-rel="lightcase:myCollection">
-                            <img src="{% static 'img/product/placeholder.png' %}"
+                          data-rel="lightcase:myCollection"
+                          data-lc-options='{"type":"image","showCaption":false,"maxWidth":1400,"maxHeight":900}'>
+                            <img
+                                src="{% static 'img/product/placeholder.png' %}"
                                 alt="{% trans 'Без фото' %}"
-                                class="portfolio-smart-img d-block w-100">
-
+                                class="portfolio-smart-img d-block w-100"
+                            />
                         </a>
                     {% endif %}
-
                 </div>
             </div>
         {% endfor %}
-      </div>
-
+    </div>
       {% else %}
       <div class="text-center py-5">
           <p class="text-muted">
@@ -192,7 +193,7 @@
                       
                       <!-- Блок зображення товару (без ratio, щоб не зламати тему!) -->
                       <div class="product-img">
-                        <a href="{{ product.get_absolute_url }}">
+                        <a href="{% url 'product_detail' product.slug %}">
                           {% with main_image=product.images.first %}
                             {% if main_image %}
                               <!-- Використовуємо кастомний клас для фіксації пропорцій -->
