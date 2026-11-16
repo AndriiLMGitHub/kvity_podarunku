@@ -159,3 +159,55 @@
     outline: none;
     box-shadow: none;
 }
+
+
+
+
+/* ======================================
+   ROSELA — ADMIN LOGIN BUTTON
+====================================== */
+
+.ltn__header-options .user-menu>ul>li>a.admin-login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+    padding: 0;
+
+    border: none;
+    border-radius: 0;
+
+    background-color: #ffffff;
+    color: var(--ltn__primary-color);
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+/* HOVER */
+.ltn__header-options .user-menu>ul>li>a.admin-login-btn:hover,
+.ltn__header-options .user-menu>ul>li>a.admin-login-btn:focus-visible {
+    background-color: var(--ltn__secondary-color);
+    color: #ffffff;
+}
+
+/* ICON */
+.admin-login-btn i {
+    font-size: 20px;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+/* ACCESSIBILITY */
+@media (prefers-reduced-motion: reduce) {
+
+    .admin-login-btn,
+    .admin-login-btn i {
+        transition: none;
+    }
+}
