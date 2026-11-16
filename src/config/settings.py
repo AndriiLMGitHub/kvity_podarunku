@@ -26,6 +26,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_TRUSTED_ORIGINS = [
     "https://kvity-podarunky.com.ua",
     "https://www.kvity-podarunky.com.ua",
+    "https://kvity-podarunky.onrender.com",
 ]
 
 

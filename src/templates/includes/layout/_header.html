@@ -46,14 +46,15 @@
                                     
                                     <!-- Випадаюче меню Каталогу -->
                                     <li class="menu-icon">
-                                        <!-- Посилання на загальний каталог -->
-                                        <a href="{% url 'product_list' %}">{% trans "Магазин" %}</a>
+                                        <a href="{% url 'product_list' %}">
+                                            {% trans "Магазин" %}
+                                        </a>
+
                                         <ul class="sub-menu">
-                                            <!-- Динамічний вивід категорій -->
                                             {% for category in categories %}
                                                 <li>
-                                                    <!-- Заміни 'shop:category_detail' на реальний name твого URL для категорій -->
-                                                    <a href="{% url 'category_detail' category.slug %}">
+                                                    <a href="{% url 'category_detail' category.slug %}"
+                                                    class="shop-animated-link">
                                                         {{ category.name }}
                                                     </a>
                                                 </li>
