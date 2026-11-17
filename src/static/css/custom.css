@@ -172,8 +172,8 @@
     align-items: center;
     justify-content: center;
 
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
     padding: 0;
 
     border: none;
@@ -198,7 +198,7 @@
 
 /* ICON */
 .admin-login-btn i {
-    font-size: 20px;
+    font-size: 22px;
     color: inherit;
     transition: color 0.3s ease;
 }
